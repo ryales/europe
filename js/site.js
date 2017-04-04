@@ -68,6 +68,12 @@ function loadKeyFigures(url){
     });
 }
 
+function appealPlusLinks(appeals){
+    appeals.forEach(function(a){
+        $('#appealplus').append('<a href="http://ifrcgo.org/appeals/'+a.toLowerCase()+'">http://ifrcgo.org/appeals/'+a.toLowerCase()+'/</a><br />');
+    });
+}
+
 var appeals = ['MDRET016','MDRSO005','MDRKE039'];
 var hxlAppealString = '';
 appeals.forEach(function(appeal,i){
@@ -76,5 +82,43 @@ appeals.forEach(function(appeal,i){
 console.log(hxlAppealString);
 var hxlAppealsCallURL = 'https://proxy.hxlstandard.org/data.json?merge-tags03=%23meta%2Bcoverage%2C%23meta%2Bfunding&filter04=replace-map&replace-map-url04=https%3A//docs.google.com/spreadsheets/d/1hTE0U3V8x18homc5KxfA7IIrv1Y9F1oulhJt0Z4z3zo/edit%3Fusp%3Dsharing&merge-keys05=%23country%2Bname&filter03=merge&url=https%3A//docs.google.com/spreadsheets/d/19pBx2NpbgcLFeWoJGdCqECT2kw9O9_WmcZ3O41Sj4hU/edit%23gid%3D0&merge-url05=https%3A//docs.google.com/spreadsheets/d/1GugpfyzridvfezFcDsl6dNlpZDqI8TQJw-Jx52obny8/edit%3Fusp%3Dsharing&merge-keys03=%23meta%2Bid&filter02=select&filter01=clean&strip-headers=on&clean-date-tags01=%23date&force=on&merge-url03=https%3A//docs.google.com/spreadsheets/d/1rVAE8b3uC_XIqU-eapUGLU7orIzYSUmvlPm9tI0bCbU/edit%23gid%3D0&filter05=merge&merge-tags05=%23country%2Bcode'+hxlAppealString;
 console.log(hxlAppealsCallURL);
+var hxlDocumentsCallURL = 'https://proxy.hxlstandard.org/data.json?filter02=select&strip-headers=on&url=https%3A//docs.google.com/spreadsheets/d/1gJ4N_PYBqtwVuJ10d8zXWxQle_i84vDx5dHNBomYWdU/edit%3Fusp%3Dsharing'+hxlAppealString;
 
+$.ajax({
+    type: 'GET',
+    url: hxlAppealsCallURL,
+    dataType: 'json',
+    success:function(response){
+        // could use to make map highlight countries
+        console.log(response);
+        $('#overview').append(JSON.stringify(hxlProxyToJSON(response)));
+    }
+});
+
+$.ajax({
+    type: 'GET',
+    url: hxlDocumentsCallURL,
+    dataType: 'json',
+    success:function(response){
+        // could use to make map highlight countries
+        console.log(response);
+        $('#documents').append(JSON.stringify(hxlProxyToJSON(response)));
+    }
+});
+
+//example key figures running off a spreadsheet.
 loadKeyFigures('https://docs.google.com/spreadsheets/d/1PwKRHEDkqUfmGDeyLrYwWhO50yfnh2ZHtIyn9W0zgdw/edit?usp=sharing');
+appealPlusLinks(appeals);
+
+/*
+Here is a few suggestions:
+Maps of countries with open operations.
+Overview of:
+DREF and Emergency Appeals launched in the four countries
+Funding level
+Links to relevant appeal documents
+Global tools deployed
+Operational teams in place
+Public documents (joint statement, press release)
+Links to appeal plus pages for each operation
+*/
