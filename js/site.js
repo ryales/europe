@@ -68,10 +68,54 @@ function loadKeyFigures(url){
     });
 }
 
-function appealPlusLinks(appeals){
-    appeals.forEach(function(a){
-        $('#appealplus').append('<a href="http://ifrcgo.org/appeals/'+a.toLowerCase()+'">http://ifrcgo.org/appeals/'+a.toLowerCase()+'/</a><br />');
+function createAppealsTable(data){
+    var html = "";
+    data.forEach(function(d,i){
+        var url = 'http://ifrcgo.org/appeals/'+d['#meta+id'].toLowerCase()
+        html += '<tr><td><a href="'+url+'" target="_blank">'+d['#crisis+name']+'</a></td><td>'+d['#date+start']+'</td><td>'+d['#date+end']+'</td><td>'+niceFormatNumber(d['#targeted'])+'</td><td>'+niceFormatNumber(d['#meta+value'])+'</td><td>'+niceFormatNumber(d['#meta+funding'])+'</td><td id="coverage'+i+'"></td><td><a href="'+url+'" target="_blank">'+d['#meta+id']+'</a></td></tr>';
     });
+    $('#appealstable').append(html);
+    data.forEach(function(d,i){
+        createPie('#coverage'+i,60,10,d['#meta+coverage'].substring(0, d['#meta+coverage'].length - 1)/100);
+    });
+}
+
+function createPie(id,width,inner,percent){
+
+    console.log(percent);
+    var svg = d3.select(id).append("svg")
+        .attr("width", width)
+        .attr("height", width);
+
+    var radius = width/2;
+
+    var fundingArc = d3.svg.arc()
+        .innerRadius(radius-inner)
+        .outerRadius(radius)
+        .startAngle(0)
+        .endAngle(Math.PI*2*percent);
+
+    var budgetArc = d3.svg.arc()
+        .innerRadius(radius-inner)
+        .outerRadius(radius)
+        .startAngle(0)
+        .endAngle(Math.PI*2);
+
+    svg.append("path")
+        .style("fill", "#dfdfdf")
+        .attr("d", budgetArc)
+        .attr("transform", "translate("+(width/2)+","+(width/2)+")");
+
+    svg.append("path")
+        .style("fill", "#D33F49")
+        .attr("d", fundingArc)
+        .attr("transform", "translate("+(width/2)+","+(width/2)+")");
+
+    svg.append("text")
+        .attr("x",width/2)
+        .attr("y",width/2+5)
+        .text(d3.format(".0%")(percent))
+        .style("text-anchor", "middle");
 }
 
 var appeals = ['MDRET016','MDRSO005','MDRKE039'];
@@ -79,9 +123,8 @@ var hxlAppealString = '';
 appeals.forEach(function(appeal,i){
     hxlAppealString+= '&select-query02-0'+(i+1)+'=%23meta%2Bid%3D'+appeal;
 });
-console.log(hxlAppealString);
+
 var hxlAppealsCallURL = 'https://proxy.hxlstandard.org/data.json?merge-tags03=%23meta%2Bcoverage%2C%23meta%2Bfunding&filter04=replace-map&replace-map-url04=https%3A//docs.google.com/spreadsheets/d/1hTE0U3V8x18homc5KxfA7IIrv1Y9F1oulhJt0Z4z3zo/edit%3Fusp%3Dsharing&merge-keys05=%23country%2Bname&filter03=merge&url=https%3A//docs.google.com/spreadsheets/d/19pBx2NpbgcLFeWoJGdCqECT2kw9O9_WmcZ3O41Sj4hU/edit%23gid%3D0&merge-url05=https%3A//docs.google.com/spreadsheets/d/1GugpfyzridvfezFcDsl6dNlpZDqI8TQJw-Jx52obny8/edit%3Fusp%3Dsharing&merge-keys03=%23meta%2Bid&filter02=select&filter01=clean&strip-headers=on&clean-date-tags01=%23date&force=on&merge-url03=https%3A//docs.google.com/spreadsheets/d/1rVAE8b3uC_XIqU-eapUGLU7orIzYSUmvlPm9tI0bCbU/edit%23gid%3D0&filter05=merge&merge-tags05=%23country%2Bcode'+hxlAppealString;
-console.log(hxlAppealsCallURL);
 var hxlDocumentsCallURL = 'https://proxy.hxlstandard.org/data.json?filter02=select&strip-headers=on&url=https%3A//docs.google.com/spreadsheets/d/1gJ4N_PYBqtwVuJ10d8zXWxQle_i84vDx5dHNBomYWdU/edit%3Fusp%3Dsharing'+hxlAppealString;
 
 $.ajax({
@@ -89,9 +132,8 @@ $.ajax({
     url: hxlAppealsCallURL,
     dataType: 'json',
     success:function(response){
-        // could use to make map highlight countries
-        console.log(response);
-        $('#overview').append(JSON.stringify(hxlProxyToJSON(response)));
+        var data = hxlProxyToJSON(response);
+        createAppealsTable(data);
     }
 });
 
@@ -100,25 +142,31 @@ $.ajax({
     url: hxlDocumentsCallURL,
     dataType: 'json',
     success:function(response){
-        // could use to make map highlight countries
-        console.log(response);
-        $('#documents').append(JSON.stringify(hxlProxyToJSON(response)));
+        response = hxlProxyToJSON(response);
+        appeals.forEach(function(a){
+            $('#documents').append('<h3 id="appealname'+a+'" class="documenttitle"></h3><table id="documenttable'+a+'"><tr><th>Document</th><th>Country</th><th>Date</th></tr></table>');
+            response.forEach(function(d){
+                if(d['#meta+id']==a){
+                    $('#appealname'+a).html(d['#meta+appealname']);
+                    $('#documenttable'+a).append('<tr><td>'+d['#meta+documentname']+'</td><td>'+d['#country']+'</td><td>'+d['#date']+'</td></tr>');
+                }
+            });
+        });
     }
 });
 
 //example key figures running off a spreadsheet.
 loadKeyFigures('https://docs.google.com/spreadsheets/d/1PwKRHEDkqUfmGDeyLrYwWhO50yfnh2ZHtIyn9W0zgdw/edit?usp=sharing');
-appealPlusLinks(appeals);
 
 /*
 Here is a few suggestions:
 Maps of countries with open operations.
 Overview of:
-DREF and Emergency Appeals launched in the four countries
-Funding level
-Links to relevant appeal documents
+DREF and Emergency Appeals launched in the four countries - x
+Funding level - x
+Links to relevant appeal documents - x
 Global tools deployed
 Operational teams in place
 Public documents (joint statement, press release)
-Links to appeal plus pages for each operation
+Links to appeal plus pages for each operation - x
 */
