@@ -118,7 +118,7 @@ function createPie(id,width,inner,percent){
         .style("text-anchor", "middle");
 }
 
-var appeals = ['MDRET016','MDRSO005','MDRKE039'];
+var appeals = ['MDR60003','MDRET016','MDRSO005','MDRKE039','nigeria_food_insecurity_2017'];
 var hxlAppealString = '';
 appeals.forEach(function(appeal,i){
     hxlAppealString+= '&select-query02-0'+(i+1)+'=%23meta%2Bid%3D'+appeal;
