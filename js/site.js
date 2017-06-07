@@ -58,7 +58,7 @@ function loadKeyFigures(url){
             dataType: 'json',
             success: function(result){
                 var data = hxlProxyToJSON(result);
-                var html = '<div class="column small-up-2 medium-up-2"><h3>Key Figures</h3>';
+                var html = '<div class="column small-up-2 medium-up-3 large-up-4"><h3>Key Figures</h3>';
                 data.forEach(function(d){
                     html+='<div class="column"><div class="card no-border"><h4 class="keyfiguretitle text-center minheight">'+d['#meta+title']+'</h4><p class="keyfigure text-center">'+niceFormatNumber(d['#indicator'])+'</p><p class="small text-center">Source: <a href="'+d['#meta+url']+'" target="_blank">'+d['#meta+source']+'</a></p></div></div>'
                 });
