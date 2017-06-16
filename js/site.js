@@ -58,7 +58,7 @@ function loadKeyFigures(url){
             dataType: 'json',
             success: function(result){
                 var data = hxlProxyToJSON(result);
-                var html = '<div class="column small-up-2 medium-up-3 large-up-4"><h3>Key Figures</h3>';
+                var html = '<div class="column small-up-2 medium-up-3 large-up-4"><h2>Key Figures</h2>';
                 data.forEach(function(d){
                     html+='<div class="column"><div class="card no-border"><h4 class="keyfiguretitle text-center minheight">'+d['#meta+title']+'</h4><p class="keyfigure text-center">'+niceFormatNumber(d['#indicator'])+'</p><p class="small text-center">Source: <a href="'+d['#meta+url']+'" target="_blank">'+d['#meta+source']+'</a></p></div></div>'
                 });
@@ -118,7 +118,7 @@ function createPie(id,width,inner,percent){
         .style("text-anchor", "middle");
 }
 
-var appeals = ['MDR60003','MDRET016','MDRSO005','MDRKE039','nigeria_food_insecurity_2017'];
+var appeals = ['MDR60003','MDRET016','MDRSO005','MDRKE039'];
 var hxlAppealString = '';
 appeals.forEach(function(appeal,i){
     hxlAppealString+= '&select-query02-0'+(i+1)+'=%23meta%2Bid%3D'+appeal;
