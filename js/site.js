@@ -148,7 +148,10 @@ $.ajax({
             response.forEach(function(d){
                 if(d['#meta+id']==a){
                     $('#appealname'+a).html(d['#meta+appealname']);
-                    $('#documenttable'+a).append('<tr><td>'+d['#meta+documentname']+'</td><td>'+d['#country']+'</td><td>'+d['#date']+'</td></tr>');
+                    if(d['#meta+url'].substring(0,1)=='/'){
+                        d['#meta+url'] = 'http://www.ifrc.org'+d['#meta+url'];
+                    }
+                    $('#documenttable'+a).append('<tr><td><a href="'+d['#meta+url']+'">'+d['#meta+documentname']+'</a></td><td>'+d['#country']+'</td><td>'+d['#date']+'</td></tr>');
                 }
             });
         });
