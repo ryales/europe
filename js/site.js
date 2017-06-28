@@ -72,7 +72,7 @@ function createAppealsTable(data){
     var html = "";
     data.forEach(function(d,i){
         var url = 'http://ifrcgo.org/appeals/'+d['#meta+id'].toLowerCase()
-        html += '<tr><td><a href="'+url+'" target="_blank">'+d['#crisis+name']+'</a></td><td>'+d['#date+start']+'</td><td>'+d['#date+end']+'</td><td>'+niceFormatNumber(d['#targeted'])+'</td><td>'+niceFormatNumber(d['#meta+value'])+'</td><td>'+niceFormatNumber(d['#meta+funding'])+'</td><td id="coverage'+i+'"></td><td><a href="'+url+'" target="_blank">'+d['#meta+id']+'</a></td></tr>';
+        html += '<tr><td><a href="'+url+'" target="_blank">'+d['#crisis+name']+'</a></td><td>'+d['#date+start']+'</td><td>'+d['#date+end']+'</td><td style="text-align:right">'+niceFormatNumber(d['#targeted'])+'</td><td style="text-align:right">'+niceFormatNumber(d['#meta+value'])+'</td><td style="text-align:right">'+niceFormatNumber(d['#meta+funding'])+'</td><td id="coverage'+i+'"></td><td><a href="'+url+'" target="_blank">'+d['#meta+id']+'</a></td></tr>';
     });
     $('#appealstable').append(html);
     data.forEach(function(d,i){
@@ -144,7 +144,7 @@ $.ajax({
     success:function(response){
         response = hxlProxyToJSON(response);
         appeals.forEach(function(a){
-            $('#documents').append('<h3 id="appealname'+a+'" class="documenttitle"></h3><table id="documenttable'+a+'"><tr><th>Document</th><th>Country</th><th>Date</th></tr></table>');
+            $('#documents').append('<h3 id="appealname'+a+'" class="documenttitle"></h3><table id="documenttable'+a+'"><tr><th style="text-align:left">Document</th><th width="150" style="text-align:left">Country</th><th width="150" style="text-align:left">Date</th></tr></table>');
             response.forEach(function(d){
                 if(d['#meta+id']==a){
                     $('#appealname'+a).html(d['#meta+appealname']);
